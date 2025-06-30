@@ -1,42 +1,89 @@
+body,
+html,
 #root {
-    max-width: 1280px;
-    margin: 0 auto;
-    padding: 2rem;
+    height: 100%;
+    width: 100%;
+    margin: 0;
+    font-family: sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #181818;
+    color: white;
+}
+
+.game {
+    display: flex;
+    align-items: center;
+    gap: 40px;
+}
+
+.status {
+    font-size: 1.8rem;
+    margin-bottom: 20px;
+    text-align: center;
+    padding: 10px;
+    border-radius: 30px;
+    background-color: #282828;
+}
+
+.container {
+    background-color: #282828;
+    padding: 30px;
+    border-radius: 10px;
+}
+
+.board-row {
+    display: flex;
+    justify-content: center;
+}
+
+.square {
+    width: 100px;
+    height: 100px;
+    font-size: 2.5rem;
+    font-weight: bold;
+    margin: 5px;
+    border: 3px solid #202020;
+    background-color: #ffffff;
+    color: #181818;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.square:hover {
+    background-color: #d8a657;
+}
+
+.game-info {
+    background-color: #282828;
+    padding: 30px;
+    border-radius: 10px;
+    min-height: 560px;
     text-align: center;
 }
 
-.logo {
-    height: 6em;
-    padding: 1.5em;
-    will-change: filter;
-    transition: filter 300ms;
-}
-.logo:hover {
-    filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.react:hover {
-    filter: drop-shadow(0 0 2em #61dafbaa);
+.game-info ol {
+    padding-left: 0;
+    list-style-type: none;
 }
 
-@keyframes logo-spin {
-    from {
-        transform: rotate(0deg);
-    }
-    to {
-        transform: rotate(360deg);
-    }
+button {
+    padding: 10px 20px;
+    font-size: 1rem;
+    margin: 5px;
+    border-radius: 5px;
+    border: none;
+    background-color: #e78a4e;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-    a:nth-of-type(2) .logo {
-        animation: logo-spin infinite 20s linear;
-    }
-}
-
-.card {
-    padding: 2em;
-}
-
-.read-the-docs {
-    color: #888;
+button:hover {
+    background-color: #a1490a;
 }
