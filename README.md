@@ -16,6 +16,14 @@ This project presents a modern and beautifully styled implementation of the clas
 
 ![Game Preview](docs/game2.png)
 
+## 🕹️ Online Preview
+
+This project can be played as multiplayer throw a websocket conection and getting in by diferents clients.
+
+![Game Preview](docs/online.png)
+
+You have to run backend server by this repository: https://github.com/Andr3xDev/ARSW-TicTacBack
+
 </br>
 </br>
 
