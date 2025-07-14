@@ -1,6 +1,7 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import "./App.css";
 
+// El componente Square no necesita cambios.
 function Square({ value, onSquareClick }) {
     return (
         <button className="square" onClick={onSquareClick}>
@@ -9,6 +10,7 @@ function Square({ value, onSquareClick }) {
     );
 }
 
+// El componente Board no necesita cambios.
 function Board({ xIsNext, squares, onPlay }) {
     function handleClick(i) {
         if (calculateWinner(squares) || squares[i]) {
@@ -26,87 +28,107 @@ function Board({ xIsNext, squares, onPlay }) {
     const winner = calculateWinner(squares);
     let status;
     if (winner) {
-        status = "Winner: " + winner;
+        status = "Ganador: " + winner;
     } else if (squares.every((square) => square !== null)) {
         status = "Empate";
     } else {
-        status = "Next player: " + (xIsNext ? "X" : "O");
+        status = "Siguiente jugador: " + (xIsNext ? "X" : "O");
+    }
+
+    const boardRows = [];
+    for (let row = 0; row < 3; row++) {
+        const squaresInRow = [];
+        for (let col = 0; col < 3; col++) {
+            const i = row * 3 + col;
+            squaresInRow.push(
+                <Square
+                    key={i}
+                    value={squares[i]}
+                    onSquareClick={() => handleClick(i)}
+                />
+            );
+        }
+        boardRows.push(
+            <div key={row} className="board-row">
+                {squaresInRow}
+            </div>
+        );
     }
 
     return (
         <>
             <div className="status">{status}</div>
-            <div className="container">
-                <div className="board-row">
-                    <Square
-                        value={squares[0]}
-                        onSquareClick={() => handleClick(0)}
-                    />
-                    <Square
-                        value={squares[1]}
-                        onSquareClick={() => handleClick(1)}
-                    />
-                    <Square
-                        value={squares[2]}
-                        onSquareClick={() => handleClick(2)}
-                    />
-                </div>
-                <div className="board-row">
-                    <Square
-                        value={squares[3]}
-                        onSquareClick={() => handleClick(3)}
-                    />
-                    <Square
-                        value={squares[4]}
-                        onSquareClick={() => handleClick(4)}
-                    />
-                    <Square
-                        value={squares[5]}
-                        onSquareClick={() => handleClick(5)}
-                    />
-                </div>
-                <div className="board-row">
-                    <Square
-                        value={squares[6]}
-                        onSquareClick={() => handleClick(6)}
-                    />
-                    <Square
-                        value={squares[7]}
-                        onSquareClick={() => handleClick(7)}
-                    />
-                    <Square
-                        value={squares[8]}
-                        onSquareClick={() => handleClick(8)}
-                    />
-                </div>
-            </div>
+            {boardRows}
         </>
     );
 }
 
+// Componente principal del juego con la lógica de WebSocket mejorada.
 export default function Game() {
     const [history, setHistory] = useState([Array(9).fill(null)]);
     const [currentMove, setCurrentMove] = useState(0);
+    const ws = useRef(null);
+
     const xIsNext = currentMove % 2 === 0;
-    const currentSquares = history[currentMove];
+    const currentSquares = history[currentMove]; // Siempre usa el estado actual
+
+    // Función para enviar el estado actual al servidor
+    const sendGameState = (newHistory, newCurrentMove) => {
+        if (ws.current && ws.current.readyState === WebSocket.OPEN) {
+            const gameState = {
+                history: newHistory,
+                currentMove: newCurrentMove,
+            };
+            ws.current.send(JSON.stringify(gameState));
+        }
+    };
+
+    useEffect(() => {
+        ws.current = new WebSocket("ws://localhost:8080");
+
+        ws.current.onopen = () =>
+            console.log("Conectado al servidor WebSocket");
+        ws.current.onclose = () =>
+            console.log("Desconectado del servidor WebSocket");
+        ws.current.onerror = (error) =>
+            console.error("Error en WebSocket:", error);
+
+        // El listener ahora es la ÚNICA fuente de verdad para actualizar el estado
+        ws.current.onmessage = (event) => {
+            const receivedState = JSON.parse(event.data);
+            console.log("Estado recibido del servidor:", receivedState);
+            setHistory(receivedState.history);
+            setCurrentMove(receivedState.currentMove);
+        };
+
+        return () => {
+            if (ws.current) ws.current.close();
+        };
+    }, []);
 
     function handlePlay(nextSquares) {
-        const nextHistory = [...history.slice(0, currentMove + 1), nextSquares];
-        setHistory(nextHistory);
-        setCurrentMove(nextHistory.length - 1);
+        // Calcula el nuevo estado pero no lo aplica localmente todavía
+        const newHistory = [...history.slice(0, currentMove + 1), nextSquares];
+        const newCurrentMove = newHistory.length - 1;
+        // Envía el nuevo estado para que el servidor lo distribuya
+        sendGameState(newHistory, newCurrentMove);
     }
 
-    function jumpTo(nextMove) {
-        setCurrentMove(nextMove);
+    function jumpTo(move) {
+        // En lugar de actualizar el estado local, envía el estado deseado al servidor
+        sendGameState(history, move);
+    }
+
+    function handleReset() {
+        // Crea el estado inicial y lo envía al servidor
+        const initialHistory = [Array(9).fill(null)];
+        const initialMove = 0;
+        sendGameState(initialHistory, initialMove);
     }
 
     const moves = history.map((squares, move) => {
-        let description;
-        if (move > 0) {
-            description = "Go to move #" + move;
-        } else {
-            description = "Go to game start";
-        }
+        const description =
+            move > 0 ? `Ir al movimiento #${move}` : `Ir al inicio del juego`;
         return (
             <li key={move}>
                 <button onClick={() => jumpTo(move)}>{description}</button>
@@ -124,6 +146,9 @@ export default function Game() {
                 />
             </div>
             <div className="game-info">
+                {/* Botón para reiniciar el juego */}
+                <button onClick={handleReset}>Nuevo Juego</button>
+                <h3>Historial de Movimientos</h3>
                 <ol>{moves}</ol>
             </div>
         </div>
