@@ -1,12 +1,14 @@
 <div align="center">
     <h1 align="center">React Tic-Tac-Toe</h1>
     <p align="center">
-Modern and beautifully styled implementation of the classic Tic-Tac-Toe game
+Modern and beautifully styled implementation of the classic Tic-Tac-Toe game but online
     </p>
 </div>
 
 </br>
 
+> [!IMPORTANT]  
+> You have to run backend server by this repository: https://github.com/Andr3xDev/tic-tac-toe-back
 
 ## 🕹️ Preview
 
@@ -22,7 +24,7 @@ This project can be played as multiplayer throw a websocket conection and gettin
 
 ![Game Preview](docs/online.png)
 
-You have to run backend server by this repository: https://github.com/Andr3xDev/ARSW-TicTacBack
+Remember that you have to run backend server.
 
 </br>
 </br>
@@ -31,7 +33,7 @@ You have to run backend server by this repository: https://github.com/Andr3xDev/
 
 * Complete Game Logic: All the core functionalities are here, including detecting a winner, tracking players' moves, and the ability to go back to previous moves.
 * Custom Styling & Dark Mode: Features a unique and visually appealing interface with a sleek dark theme, offering a significant visual upgrade over standard tutorial styles.
-* Modern & Fast Development Environment: Built using a modern tech stack with Vite, ensuring a fast and responsive development experience with Hot Module Replacement (HMR) and an optimized build process.
+* Modern & Fast Development Environment: Built using a modern tech stack with Vite, ensuring a fast and responsive development experience with Hot Module Replacement and an optimized build process.
 * Interactive History: Jump to any previous move in the game's history to review the board state at that point.
 
 </br>
@@ -59,13 +61,13 @@ Ensure you have Node.js installed (LTS version is recommended).
 Clone the repository:
 
 ```sh
-git clone https://github.com/Andr3xDev/ARSW-tic-tac-toe.git
+git clone https://github.com/Andr3xDev/tic-tac-toe.git
 ```
 
 Navigate to the project directory:
 
 ```sh
-cd ARSW-tic-tac-toe
+cd tic-tac-toe
 npm install
 npm run dev
 ```
